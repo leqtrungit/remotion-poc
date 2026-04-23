@@ -28,14 +28,12 @@ app.post('/render', async (req, res) => {
     console.log('Starting render process for duration:', inputProps.durationInFrames);
 
     // Only bundle once and cache the webpack build
-    if (!bundledDir) {
-      console.log('Bundling project...');
-      bundledDir = await bundle({
-        entryPoint: compositionEntryPoint,
-        webpackOverride: (config) => config,
-      });
-      console.log('Bundled successfully at', bundledDir);
-    }
+    console.log('Bundling project...');
+    bundledDir = await bundle({
+      entryPoint: compositionEntryPoint,
+      webpackOverride: (config) => config,
+    });
+    console.log('Bundled successfully at', bundledDir);
 
     const composition = await selectComposition({
       serveUrl: bundledDir,

@@ -85,9 +85,7 @@
 }
 
 .timeline-clip {
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
+  margin: 8px 0;
   background-color: var(--colorTimelineClip);
   border: 1px solid var(--colorTimelineClipBorder);
   border-radius: var(--radius-sm);
@@ -95,7 +93,7 @@
   align-items: center;
   padding: 0 8px;
   opacity: 0.9;
-  cursor: pointer;
+  cursor: grab;
   transition: opacity 0.2s, transform 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -104,6 +102,28 @@
   opacity: 1;
   transform: translateY(-1px);
   z-index: 10;
+}
+
+.timeline-clip:active {
+  cursor: grabbing;
+}
+
+.timeline-clip.dragging {
+  opacity: 0.7;
+  z-index: 1000;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.track-header {
+  cursor: grab;
+}
+.track-header:active {
+  cursor: grabbing;
+}
+
+.dragging-track {
+  opacity: 0.8;
+  background-color: rgba(255,255,255,0.05);
 }
 
 .clip-label {

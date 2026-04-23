@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "18.0.1",
     "@remotion/player": "^4.0.451",
+    "@remotion/transitions": "4.0.451",
     "clsx": "^2.1.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",

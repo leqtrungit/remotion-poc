@@ -23,8 +23,15 @@ export const RemotionRoot: React.FC = () => {
         width={1280}
         height={720}
         defaultProps={defaultProps}
-        // When rendering dynamically, calculateMetadata can be used, but since we 
-        // pass the entire JSON as inputProps, we can just let duration/fps be overriden by renderMedia()
+        calculateMetadata={({ props }) => {
+          const p = props as unknown as RemotionProjectJson;
+          return {
+            durationInFrames: p.durationInFrames || 300,
+            fps: p.fps || 30,
+            width: p.width || 1280,
+            height: p.height || 720,
+          };
+        }}
       />
     </>
   );

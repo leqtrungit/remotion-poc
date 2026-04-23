@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import type { RemotionProjectJson } from './types';
 import JsonEditor from './components/Editor/JsonEditor';
+import ClipPropertiesPanel from './components/Editor/ClipPropertiesPanel';
 import PreviewPlayer from './components/Player/PreviewPlayer';
 import Timeline from './components/Timeline/Timeline';
 import './App.css'; // Will create this
 
 const initialData: RemotionProjectJson = {
+// ... same as before
+
   fps: 30,
   durationInFrames: 600,
   width: 1280,
@@ -19,26 +22,34 @@ const initialData: RemotionProjectJson = {
           id: "intro-video",
           type: "video",
           sequenceProps: {
-            from: 0,
+            from: 0, // Ignored in TransitionSeries but kept for typing
             durationInFrames: 150,
           },
           mediaProps: {
             src: "https://www.w3schools.com/html/mov_bbb.mp4",
             style: { width: '100%', height: '100%', objectFit: 'cover' },
             muted: true,
-          }
+          },
+          transitionToNext: 'fade',
+          transitionDuration: 30,
+          animations: [
+            { type: 'blur', direction: 'in', durationInFrames: 30, value: 20 }
+          ]
         },
         {
           id: "main-video",
           type: "video",
           sequenceProps: {
-            from: 150,
+            from: 0,
             durationInFrames: 450,
           },
           mediaProps: {
             src: "https://www.w3schools.com/html/mov_bbb.mp4",
             style: { width: '100%', height: '100%', objectFit: 'cover' }
-          }
+          },
+          animations: [
+            { type: 'fade', direction: 'out', durationInFrames: 30 }
+          ]
         }
       ]
     },
@@ -56,7 +67,10 @@ const initialData: RemotionProjectJson = {
           mediaProps: {
             src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
             volume: 0.5
-          }
+          },
+          animations: [
+            { type: 'fade', direction: 'in', durationInFrames: 60 }
+          ]
         }
       ]
     },
@@ -68,13 +82,16 @@ const initialData: RemotionProjectJson = {
           id: "logo-img",
           type: "image",
           sequenceProps: {
-            from: 60,
+            from: 0,
             durationInFrames: 540,
           },
           mediaProps: {
             src: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
             style: { position: 'absolute', top: 30, right: 30, width: 100, height: 100, opacity: 0.8 }
-          }
+          },
+          animations: [
+            { type: 'fade', direction: 'both', durationInFrames: 30 }
+          ]
         }
       ]
     }
@@ -85,6 +102,10 @@ function App() {
   const [projectData, setProjectData] = useState<RemotionProjectJson>(initialData);
   const [isRendering, setIsRendering] = useState(false);
   const [renderResult, setRenderResult] = useState<{ url: string; error?: string } | null>(null);
+  
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
+  const [selectedClipId, setSelectedClipId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'editor' | 'properties'>('properties');
 
   const handleRender = async () => {
     try {
@@ -146,11 +167,37 @@ function App() {
       </header>
       
       <main className="app-main">
-        <aside className="left-panel glass-panel">
-          <JsonEditor 
-            value={projectData} 
-            onChange={(newData) => setProjectData(newData)} 
-          />
+        <aside className="left-panel glass-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--colorBorder)' }}>
+            <button 
+              onClick={() => setActiveTab('editor')}
+              style={{ flex: 1, padding: '12px', background: activeTab === 'editor' ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}
+            >
+              JSON Editor
+            </button>
+            <button 
+              onClick={() => setActiveTab('properties')}
+              style={{ flex: 1, padding: '12px', background: activeTab === 'properties' ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}
+            >
+              Clip Properties
+            </button>
+          </div>
+          
+          <div style={{ flex: 1, overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            {activeTab === 'editor' ? (
+              <JsonEditor 
+                value={projectData} 
+                onChange={(newData) => setProjectData(newData)} 
+              />
+            ) : (
+              <ClipPropertiesPanel 
+                projectData={projectData}
+                onChange={(newData) => setProjectData(newData)}
+                selectedTrackId={selectedTrackId}
+                selectedClipId={selectedClipId}
+              />
+            )}
+          </div>
         </aside>
         
         <section className="right-panel">
@@ -159,7 +206,16 @@ function App() {
           </div>
           
           <div className="timeline-section glass-panel">
-            <Timeline projectData={projectData} />
+            <Timeline 
+              projectData={projectData} 
+              onChange={(newData) => setProjectData(newData)}
+              onSelectClip={(trackId, clipId) => {
+                setSelectedTrackId(trackId);
+                setSelectedClipId(clipId);
+                setActiveTab('properties');
+              }}
+              selectedClipId={selectedClipId}
+            />
           </div>
         </section>
       </main>

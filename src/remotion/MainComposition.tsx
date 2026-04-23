@@ -1,6 +1,19 @@
 import React from 'react';
-import { AbsoluteFill, Sequence, Video, Img, Audio } from 'remotion';
+import { AbsoluteFill } from 'remotion';
+import { TransitionSeries, linearTiming } from '@remotion/transitions';
+import { fade } from '@remotion/transitions/fade';
+import { slide } from '@remotion/transitions/slide';
+import { wipe } from '@remotion/transitions/wipe';
 import type { RemotionProjectJson, Clip } from '../types';
+import { AnimatedClip } from './AnimatedClip';
+
+const getTransitionPresentation = (type?: string) => {
+  switch (type) {
+    case 'slide': return slide();
+    case 'wipe': return wipe();
+    case 'fade': default: return fade();
+  }
+};
 
 export const MainComposition: React.FC<any> = (props: RemotionProjectJson) => {
   const { tracks } = props;
@@ -9,18 +22,24 @@ export const MainComposition: React.FC<any> = (props: RemotionProjectJson) => {
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       {tracks.map((track) => (
         <AbsoluteFill key={track.id}>
-          {track.clips.map((clip: Clip<any>) => (
-            <Sequence
-              key={clip.id}
-              {...(clip.sequenceProps as any)}
-            >
-              <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center' }}>
-                {clip.type === 'video' && <Video {...(clip.mediaProps as any)} />}
-                {clip.type === 'image' && <Img {...(clip.mediaProps as any)} />}
-                {clip.type === 'audio' && <Audio {...(clip.mediaProps as any)} />}
-              </AbsoluteFill>
-            </Sequence>
-          ))}
+          <TransitionSeries>
+            {track.clips.map((clip: Clip<any>, index: number) => {
+              const hasTransition = clip.transitionToNext && clip.transitionToNext !== 'none' && index < track.clips.length - 1;
+              return (
+                <React.Fragment key={clip.id}>
+                  <TransitionSeries.Sequence durationInFrames={clip.sequenceProps.durationInFrames}>
+                    <AnimatedClip clip={clip} />
+                  </TransitionSeries.Sequence>
+                  {hasTransition && (
+                    <TransitionSeries.Transition
+                      presentation={getTransitionPresentation(clip.transitionToNext)}
+                      timing={linearTiming({ durationInFrames: clip.transitionDuration || 15 })}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </TransitionSeries>
         </AbsoluteFill>
       ))}
     </AbsoluteFill>
