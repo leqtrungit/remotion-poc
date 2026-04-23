@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   /**
    * Nếu trình duyệt chặn CORS tới Ollama, trong dev đặt:
    * VITE_OLLAMA_API_URL=http://localhost:5173/ollama-proxy/api/generate
