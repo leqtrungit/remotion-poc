@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  remotion-renderer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: remotion_render_service
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount out folder so the generated MP4s are accessible on the host Macbook
+      - ./out:/app/out
+    # Provide enough shared memory for Chromium to render without crashing
+    shm_size: '2gb'
+    environment:
+      - NODE_ENV=production

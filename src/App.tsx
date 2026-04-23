@@ -23,7 +23,7 @@ const initialData: RemotionProjectJson = {
             durationInFrames: 150,
           },
           mediaProps: {
-            src: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4",
+            src: "https://www.w3schools.com/html/mov_bbb.mp4",
             style: { width: '100%', height: '100%', objectFit: 'cover' },
             muted: true,
           }
@@ -83,11 +83,66 @@ const initialData: RemotionProjectJson = {
 
 function App() {
   const [projectData, setProjectData] = useState<RemotionProjectJson>(initialData);
+  const [isRendering, setIsRendering] = useState(false);
+  const [renderResult, setRenderResult] = useState<{ url: string; error?: string } | null>(null);
+
+  const handleRender = async () => {
+    try {
+      setIsRendering(true);
+      setRenderResult(null);
+
+      const response = await fetch('http://localhost:3000/render', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to render video');
+      }
+
+      setRenderResult({ url: `http://localhost:3000${data.downloadUrl}` });
+    } catch (err: any) {
+      setRenderResult({ url: '', error: err.message });
+    } finally {
+      setIsRendering(false);
+    }
+  };
 
   return (
     <div className="app-container">
-      <header className="app-header glass-panel">
+      <header className="app-header glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 className="app-title">Remotion PoC Editor</h1>
+        
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {renderResult?.url && (
+            <a href={renderResult.url} target="_blank" rel="noreferrer" style={{ color: '#22c55e', fontSize: '14px', textDecoration: 'none' }}>
+              ✓ Download MP4
+            </a>
+          )}
+          {renderResult?.error && (
+            <span style={{ color: '#ef4444', fontSize: '14px' }}>Error: {renderResult.error}</span>
+          )}
+          
+          <button 
+            onClick={handleRender} 
+            disabled={isRendering}
+            style={{
+              backgroundColor: isRendering ? '#4f46e5' : '#6366f1',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontWeight: 600,
+              opacity: isRendering ? 0.7 : 1,
+              cursor: isRendering ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isRendering ? 'Rendering...' : 'Render to MP4'}
+          </button>
+        </div>
       </header>
       
       <main className="app-main">
