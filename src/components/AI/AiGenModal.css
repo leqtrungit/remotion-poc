@@ -1,0 +1,109 @@
+.ai-gen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.ai-gen-dialog {
+  width: 100%;
+  max-width: 520px;
+  max-height: min(90vh, 640px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid var(--colorBorder);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.ai-gen-dialog-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--colorBorder);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--colorPrimary);
+}
+
+.ai-gen-dialog-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.ai-gen-label {
+  font-size: 0.85rem;
+  color: var(--colorFgMuted, rgba(255, 255, 255, 0.65));
+}
+
+.ai-gen-hint {
+  margin: -4px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--colorFgMuted, rgba(255, 255, 255, 0.5));
+}
+
+.ai-gen-textarea {
+  flex: 1;
+  min-height: 140px;
+  resize: vertical;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--colorBorder);
+  background: var(--colorBgBase, rgba(0, 0, 0, 0.25));
+  color: var(--colorFg, #fff);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.ai-gen-textarea:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.ai-gen-error {
+  font-size: 0.85rem;
+  color: #ef4444;
+  margin: 0;
+}
+
+.ai-gen-dialog-footer {
+  padding: 12px 20px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--colorBorder);
+}
+
+.ai-gen-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+}
+
+.ai-gen-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-gen-btn-secondary {
+  background: transparent;
+  color: var(--colorFgMuted, rgba(255, 255, 255, 0.75));
+  border: 1px solid var(--colorBorder);
+}
+
+.ai-gen-btn-primary {
+  background: #6366f1;
+  color: #fff;
+}
