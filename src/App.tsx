@@ -4,6 +4,7 @@ import JsonEditor from './components/Editor/JsonEditor';
 import ClipPropertiesPanel from './components/Editor/ClipPropertiesPanel';
 import PreviewPlayer from './components/Player/PreviewPlayer';
 import Timeline from './components/Timeline/Timeline';
+import { AiGenModal } from './components/AI/AiGenModal';
 import './App.css'; // Will create this
 
 const initialData: RemotionProjectJson = {
@@ -106,6 +107,7 @@ function App() {
   const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [selectedClipId, setSelectedClipId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'editor' | 'properties'>('properties');
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const handleRender = async () => {
     try {
@@ -182,6 +184,33 @@ function App() {
               Clip Properties
             </button>
           </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              padding: '8px 12px',
+              borderBottom: '1px solid var(--colorBorder)',
+              flexShrink: 0,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setAiModalOpen(true)}
+              style={{
+                backgroundColor: 'rgba(99, 102, 241, 0.25)',
+                color: '#e0e7ff',
+                border: '1px solid rgba(99, 102, 241, 0.45)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+              }}
+            >
+              AI gen
+            </button>
+          </div>
           
           <div style={{ flex: 1, overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
             {activeTab === 'editor' ? (
@@ -219,6 +248,14 @@ function App() {
           </div>
         </section>
       </main>
+
+      {aiModalOpen ? (
+        <AiGenModal
+          onClose={() => setAiModalOpen(false)}
+          onApply={(data) => setProjectData(data)}
+          currentProject={projectData}
+        />
+      ) : null}
     </div>
   );
 }
